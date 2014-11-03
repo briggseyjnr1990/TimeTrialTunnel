@@ -1,0 +1,17 @@
+public class Enemy {
+	private int health = 100;
+	private int attackStrength = 0;
+	
+	public int getHealth(){
+		return health;
+	}
+	public void setHealth(int health){
+		this.health = health;
+	}
+	public int getAttackStrength() {
+		return attackStrength;
+	}
+	public void setAttackStrength(int attackStrength) {
+		this.attackStrength = attackStrength;
+	}
+}
