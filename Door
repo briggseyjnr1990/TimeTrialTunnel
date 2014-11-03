@@ -1,0 +1,30 @@
+public class Door implements Enterable {
+
+	private Key myKey;
+	private Enterable outSite;
+	private Enterable inSite;
+
+	Door(Enterable out, Enterable in, Key k){
+		outSite = out;
+		inSite = in;
+		myKey = k;
+	}
+	public void enter(Player p, Gui gui){
+		if (p.haveItem(myKey)) {
+			gui.textArea.setText(gui.textArea.getText() + "\n-*-*-*-*-*-*     Your key works! The door creaks open,   *-*-*-*-*-*-");
+			gui.textArea.setText(gui.textArea.getText() + "\n-*-*-*-*    and slams behind you after you pass through.     *-*-*-*-");
+			gui.textArea.setText(gui.textArea.getText() + "\n*********************************************************************");
+			if (p.getLoc() == outSite){
+				inSite.enter(p, gui);
+			}
+			else if (p.getLoc() == inSite){
+				outSite.enter(p, gui); 
+			}
+		}
+		else {
+			gui.textArea.setText(gui.textArea.getText() + "\n-*-*-*-*-*-*    You don't have the key for this door!    *-*-*-*-*-*-");
+			gui.textArea.setText(gui.textArea.getText() + "\n-*-*-*-*    Sorry. Come back when you have found the key.    *-*-*-*-");
+			gui.textArea.setText(gui.textArea.getText() + "\n*********************************************************************");
+		}
+	}
+}
