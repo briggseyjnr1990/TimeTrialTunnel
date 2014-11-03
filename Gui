@@ -1,0 +1,420 @@
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.JScrollPane;
+import javax.swing.border.TitledBorder;
+import javax.swing.text.DefaultCaret;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.Timer;
+import javax.swing.UIManager;
+import java.awt.Color;
+import java.awt.Font;
+import javax.swing.JTextPane;
+import javax.swing.JLabel;
+import javax.swing.ImageIcon;
+
+public class Gui extends JFrame {
+
+	private static final long serialVersionUID = 1L;
+	private JPanel contentPane;
+	private JTextField textField;
+	public JTextArea textArea;
+	String input;
+	boolean bool = false;
+	private JPanel panel;
+	private JScrollPane scrollPane;
+	private JPanel panel_1;
+	private JTextPane txtpnDirections;
+	private JLabel lblNewLabel;
+
+	public static void main(String[] args) {
+		String before = "";
+		Gui gui = new Gui();
+		gui.setVisible(true);
+		gui.guiMenu(before, gui);
+	}
+
+	public Gui() {
+		setResizable(false);
+		setBackground(Color.LIGHT_GRAY);
+		setTitle("Time Trial Tunnel");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 660, 560);
+		contentPane = new JPanel();
+		contentPane.setBackground(Color.LIGHT_GRAY);
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		contentPane.setLayout(null);
+		setContentPane(contentPane);
+
+		panel_1 = new JPanel();
+		panel_1.setBackground(Color.LIGHT_GRAY);
+		panel_1.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "User Input", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panel_1.setBounds(4, 408, 98, 43);
+		contentPane.add(panel_1);
+		panel_1.setLayout(null);
+
+		textField = new JTextField();
+		textField.setForeground(Color.GREEN);
+		textField.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		textField.setBackground(Color.BLACK);
+		textField.setToolTipText("Enter commands/directions here");
+		textField.setBounds(6, 16, 86, 20);
+		panel_1.add(textField);
+		textField.addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				int key=e.getKeyCode();
+				if(e.getSource()==textField)
+				{
+					if(key==KeyEvent.VK_ENTER)
+					{ 
+						bool = true;                 
+					}
+				}
+			}
+		});
+		textField.setColumns(10);
+
+		panel = new JPanel();
+		panel.setBackground(Color.LIGHT_GRAY);
+		panel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Story Window", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panel.setBounds(4, 14, 424, 383);
+		contentPane.add(panel);
+		panel.setLayout(null);
+
+		scrollPane = new JScrollPane();
+		scrollPane.setToolTipText("Use this to scroll back in case you forgot something");
+		scrollPane.setBounds(6, 16, 412, 356);
+		panel.add(scrollPane);
+
+		textArea = new JTextArea();
+		textArea.setForeground(Color.GREEN);
+		textArea.setBackground(Color.BLACK);
+		textArea.setEditable(false);
+		textArea.setToolTipText("The story so far. Pay attention or you will miss something!");
+		scrollPane.setViewportView(textArea);
+
+		txtpnDirections = new JTextPane();
+		txtpnDirections.setForeground(Color.GREEN);
+		txtpnDirections.setBackground(Color.BLACK);
+		txtpnDirections.setText("Directions:\tn/N = North\tCommands:  g/G = Grab\r\n\ts/S = South\t                          t/T = Toss\r\n\te/E = East                               v/V = View Items\r\n\tw/W = West\r\n\tu/U = Up\r\n\td/D = Down");
+		txtpnDirections.setEditable(false);
+		txtpnDirections.setBounds(112, 408, 322, 113);
+		contentPane.add(txtpnDirections);
+
+		lblNewLabel = new JLabel("New label");
+		lblNewLabel.setIcon(new ImageIcon(Gui.class.getResource("/Image/TunnelPic.png")));
+		lblNewLabel.setBounds(444, 31, 200, 490);
+		contentPane.add(lblNewLabel);
+		DefaultCaret caret = (DefaultCaret)textArea.getCaret();
+		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+	}
+	public void guiMenu(String before, Gui gui){
+		Timer t;
+		t=new Timer();
+		textArea.setText(before + "\nWelcome to the Cave"+"\nChoose what you want to do"+"\n1. Start game - Too Easy"
+				+"\n2. Start game - Normal"+"\n3. Start game - Hard"+"\n4. Start game - Impossible"+"\n5. Quit Game");
+		boolean bol = true;
+		bool = false;
+		while(bol){
+			if(bool == true){
+				input = textField.getText();
+				char key = input.charAt(0);
+				switch (key){
+				case '1': t.schedule(new GameTask(gui), 1000 * 1000); startQuest(t, gui); break;
+				case '2': t.schedule(new GameTask(gui), 100 * 1000); startQuest(t, gui); break;
+				case '3': t.schedule(new GameTask(gui), 50 * 1000); startQuest(t, gui); break;
+				case '4': t.schedule(new GameTask(gui), 30 * 1000); startQuest(t, gui); break;
+				case '5': gui.dispose(); System.exit(0); break;
+				default: textArea.setText(textArea.getText() + "\nThat is not a valid option"); 
+				before = "\n" + textArea.getText();
+				bool = false;
+				gui.guiMenu(before, gui);
+				break;
+				}
+			}
+		}
+	}
+	public void startQuest(Timer t, Gui gui){
+		String before = "";
+		bool = false;
+		boolean bol = true;
+		Player thePlayer = new Player();
+		Tunnel theCave = new Tunnel();
+		Room startRm = theCave.createCave();
+		thePlayer.setRoom(startRm);
+		textArea.setText(textArea.getText() + thePlayer.look());
+		int direction = 9;
+		textArea.setText(textArea.getText() + "\n-*-*-*-*-*-*    Your current health status is: " +  thePlayer.getHealth() + "       "
+				+ "*-*-*-*-*-*-" + '\n');
+		textArea.setText(textArea.getText() + "\n-*-*-*-*-*-*         Which way (n,s,e,w,u,d),            *-*-*-*-*-*-\n"
+				+ "-*-*-*-*-*-*       grab (g) or toss (t) an item,         *-*-*-*-*-*-\n"
+				+ "-*-*-*-*-*-*   view (v) your inventory or quit (q)?      *-*-*-*-*-*-\n");
+		textArea.setText(textArea.getText() + "\n*********************************************************************");
+		textField.setText("");
+		while (input.charAt(0)!='q') {
+			while(bol){
+				if(bool == true){
+					input = textField.getText();
+					textField.setText("");
+					if(input == ""){
+						input = " ";
+					}
+					char key = input.charAt(0);
+					switch (key){
+					case 'n': case 'N': case 's': case 'S':
+					case 'e': case 'E': case 'w': case 'W':
+					case 'u': case 'U': case 'd': case 'D':
+						direction = convertDirection(input, gui);
+						thePlayer.go(direction, gui);
+						if((thePlayer.getLoc()== Tunnel.r1)){
+							lblNewLabel.setIcon(new ImageIcon(Gui.class.getResource("/Image/42132240.png")));
+						}
+						if((thePlayer.getLoc()).noEnemies()){	
+						}
+						else{
+							textArea.setText(textArea.getText() + "\n-*-*-*-*-*-*   Your presence has alerted a cave troll!   *-*-*-*-*-*-\n" + 
+									"-*-*-*   He must be dealt with quickly for you to continue.    *-*-*-\n");
+							textArea.setText(textArea.getText() + "\n*********************************************************************");
+							fight(thePlayer, thePlayer.getLoc().getEnemy(), gui);
+							thePlayer.getLoc().removeEnemy();
+						}
+						textArea.setText(textArea.getText() + thePlayer.look());
+						textArea.setText(textArea.getText() + "\n-*-*-*-*-*-*    Your current health status is: " +  thePlayer.getHealth() + 
+								"       *-*-*-*-*-*-" + '\n');
+						textArea.setText(textArea.getText() + "\n-*-*-*-*-*-*         Which way (n,s,e,w,u,d),            *-*-*-*-*-*-\n"
+								+ "-*-*-*-*-*-*       grab (g) or toss (t) an item,         *-*-*-*-*-*-\n"
+								+ "-*-*-*-*-*-*   view (v) your inventory or quit (q)?      *-*-*-*-*-*-\n");
+						textArea.setText(textArea.getText() + "\n*********************************************************************");
+						bool = false;
+						break;
+					case 'g': case 'G':
+						if ((thePlayer.getLoc()).roomEmpty()){
+							gui.textArea.setText(gui.textArea.getText() + "\n-*-*-*-*-*-*            The room is empty.               *-*-*-*-*-*-" + '\n');
+							gui.textArea.setText(gui.textArea.getText() + "\n*********************************************************************");
+							textArea.setText(textArea.getText() + thePlayer.look());
+							textArea.setText(textArea.getText() + "-*-*-*-*-*-*    Your current health status is: " +  thePlayer.getHealth() 
+									+ "       *-*-*-*-*-*-" + '\n');
+							textArea.setText(textArea.getText() + "-*-*-*-*-*-*         Which way (n,s,e,w,u,d),            *-*-*-*-*-*-\n"
+									+ "-*-*-*-*-*-*       grab (g) or toss (t) an item,         *-*-*-*-*-*-\n"
+									+ "-*-*-*-*-*-*   view (v) your inventory or quit (q)?      *-*-*-*-*-*-\n");
+							textArea.setText(textArea.getText() + "\n*********************************************************************");
+							bool = false;
+						}
+						else {
+							Item itemToGrab = choosePickupItem(thePlayer, gui);  
+							thePlayer.pickUp(itemToGrab);
+							(thePlayer.getLoc()).removeItem(itemToGrab);
+							textArea.setText(textArea.getText() + thePlayer.look());
+							textArea.setText(textArea.getText() + "\n-*-*-*-*-*-*    Your current health status is: " +  thePlayer.getHealth() 
+									+ "       *-*-*-*-*-*-" + '\n');
+							textArea.setText(textArea.getText() + "\n-*-*-*-*-*-*         Which way (n,s,e,w,u,d),            *-*-*-*-*-*-\n"
+									+ "-*-*-*-*-*-*       grab (g) or toss (t) an item,         *-*-*-*-*-*-\n"
+									+ "-*-*-*-*-*-*   view (v) your inventory or quit (q)?      *-*-*-*-*-*-\n");
+							textArea.setText(textArea.getText() + "\n*********************************************************************");
+							bool = false;
+							if(itemToGrab instanceof Treasure){
+								before = gui.textArea.getText() + "\nYou did it! You found the treasure before the timer ran out. Well done!\n";
+								t.cancel();
+								t.purge();
+								gui.guiMenu(before, gui);
+								gui = new Gui();
+							}
+						}
+						break;
+					case 't': case 'T':
+						if (thePlayer.handsEmpty()){
+							gui.textArea.setText(gui.textArea.getText() + "\n-*-*-*-*-*-*          You have nothing to drop.          *-*-*-*-*-*-" + '\n');
+							gui.textArea.setText(gui.textArea.getText() + "\n*********************************************************************");
+							textArea.setText(textArea.getText() + thePlayer.look());
+							textArea.setText(textArea.getText() + "-*-*-*-*-*-*    Your current health status is: " +  thePlayer.getHealth() 
+									+ "       *-*-*-*-*-*-" + '\n');
+							textArea.setText(textArea.getText() + "-*-*-*-*-*-*         Which way (n,s,e,w,u,d),            *-*-*-*-*-*-\n"
+									+ "-*-*-*-*-*-*       grab (g) or toss (t) an item,         *-*-*-*-*-*-\n"
+									+ "-*-*-*-*-*-*   view (v) your inventory or quit (q)?      *-*-*-*-*-*-\n");
+							textArea.setText(textArea.getText() + "\n*********************************************************************");
+							bool = false;
+						}
+						else {
+							int itemToToss = chooseDropItem(thePlayer, gui);
+							thePlayer.drop(itemToToss);
+							textArea.setText(textArea.getText() + thePlayer.look());
+							textArea.setText(textArea.getText() + "\n-*-*-*-*-*-*    Your current health status is: " +  thePlayer.getHealth() 
+									+ "       *-*-*-*-*-*-" + '\n');
+							textArea.setText(textArea.getText() + "-*-*-*-*-*-*         Which way (n,s,e,w,u,d),            *-*-*-*-*-*-\n"
+									+ "-*-*-*-*-*-*       grab (g) or toss (t) an item,         *-*-*-*-*-*-\n"
+									+ "-*-*-*-*-*-*   view (v) your inventory or quit (q)?      *-*-*-*-*-*-\n");
+							textArea.setText(textArea.getText() + "\n*********************************************************************");
+							bool = false;
+						}
+						break;
+					case 'q': case 'Q':
+						before = "\n" + gui.textArea.getText(); 
+						gui.guiMenu(before, gui);
+						break;
+					default: textArea.setText(textArea.getText() + "\nThat is not a valid option");
+					textArea.setText(textArea.getText() + thePlayer.look());
+					textArea.setText(textArea.getText() + "\n-*-*-*-*-*-*    Your current health status is: " +  thePlayer.getHealth() 
+							+ "       *-*-*-*-*-*-" + '\n');
+					textArea.setText(textArea.getText() + "-*-*-*-*-*-*         Which way (n,s,e,w,u,d),            *-*-*-*-*-*-\n"
+							+ "-*-*-*-*-*-*       grab (g) or toss (t) an item,         *-*-*-*-*-*-\n"
+							+ "-*-*-*-*-*-*   view (v) your inventory or quit (q)?      *-*-*-*-*-*-\n");
+					textArea.setText(textArea.getText() + "\n*********************************************************************");
+					bool = false;
+					break;
+					}
+				}
+			}
+		}
+		before = "\n" + gui.textArea.getText(); 
+		gui.guiMenu(before, gui);
+
+	}
+	private int convertDirection(String input, Gui gui){
+		char d = input.charAt(0);
+		int theDirection = 9999;
+		switch(d){
+		case 'n': case 'N': theDirection = 0;break;
+		case 's': case 'S': theDirection = 1;break;
+		case 'e': case 'E': theDirection = 2;break;
+		case 'w': case 'W': theDirection = 3;break;
+		case 'u': case 'U': theDirection = 4;break;
+		case 'd': case 'D': theDirection = 5;break;
+		}
+		return theDirection;
+	}
+	private Item choosePickupItem(Player p,  Gui gui) {
+		Item[] contentsArray = (p.getLoc()).getRoomContents();
+		int theChoice = -1;
+		bool = false;
+		do {
+			boolean bol = true;
+			gui.textArea.setText(gui.textArea.getText() + "\n-*-*-*-*-*-*                This room has:               *-*-*-*-*-*-");
+			for (int i = 0; i < contentsArray.length ; i++){
+				gui.textArea.setText(gui.textArea.getText() + "\n-*-*-*-*-*-*            " + (i+1) + ": "
+						+ contentsArray[i].getDesc() + "            *-*-*-*-*-*-");
+			}
+			gui.textArea.setText(gui.textArea.getText() + "\n-*-*-*-*-*-*    Enter the number of the item to grab:    *-*-*-*-*-*-\n");
+			while(bol){
+				if(bool == true){
+					input = textField.getText();
+					textField.setText("");
+					bool = false;
+					bol = false;
+				}
+			}
+			try  {
+				theChoice = Integer.parseInt(input);
+			} catch (NumberFormatException e) {
+				gui.textArea.setText(gui.textArea.getText() + "\n-*-*-*-*-*-*               Invalid input.                *-*-*-*-*-*-");
+				gui.textArea.setText(gui.textArea.getText() + "\n*********************************************************************");
+				theChoice = -1;
+			}	
+			if (theChoice < 0 || theChoice > contentsArray.length){
+				gui.textArea.setText(gui.textArea.getText() + "\n-*-*-*-*-*-*        That item is not in the room.        *-*-*-*-*-*-");
+				gui.textArea.setText(gui.textArea.getText() + "\n*********************************************************************");
+			}
+		} while (theChoice < 0 || theChoice > contentsArray.length); 
+		return contentsArray[theChoice-1];
+	}
+	private int chooseDropItem(Player p,  Gui gui){
+		int theChoice = -1;
+		bool = false;
+		do {
+			boolean bol = true;
+			gui.textArea.setText(gui.textArea.getText() + "\nYou are carrying: " +
+					p.showMyThings() + '\n');
+			gui.textArea.setText(gui.textArea.getText() + "\n-*-*-*-*-*-*    Enter the number of the item to drop:    *-*-*-*-*-*-\n" );
+			while(bol){
+				if(bool == true){
+					input = textField.getText();
+					textField.setText("");
+					bool = false;
+					bol = false;
+				}
+			}
+			try  {
+				theChoice = Integer.parseInt(input);
+			}
+			catch (NumberFormatException e) {
+				gui.textArea.setText(gui.textArea.getText() + "\n-*-*-*-*-*-*               Invalid input.                *-*-*-*-*-*-");
+				gui.textArea.setText(gui.textArea.getText() + "\n*********************************************************************");
+				theChoice = -1;
+			}
+			if (theChoice < 0 || theChoice > p.numItemsCarried()){
+				gui.textArea.setText(gui.textArea.getText() + "\n-*-*-*-*-*-*               Invalid input.                *-*-*-*-*-*-");
+				gui.textArea.setText(gui.textArea.getText() + "\n*********************************************************************");
+			}
+		} while (theChoice < 0 || theChoice > p.numItemsCarried());
+		return theChoice;
+	}
+	public void fight(Player p, Enemy e, Gui gui){
+
+		bool = false;
+		while(p.getHealth() != 0 & e.getHealth() != 0){
+			boolean bol = true;
+			textArea.setText(textArea.getText() + "\n-* Choose how to attack your foe! (Select number then press enter) *-");
+			textArea.setText(textArea.getText() + "\n-*-*-*-*-*-*                 1: Slash                    *-*-*-*-*-*-");
+			textArea.setText(textArea.getText() + "\n-*-*-*-*-*-*                 2: Punch                    *-*-*-*-*-*-");
+			textArea.setText(textArea.getText() + "\n-*-*-*-*-*-*                 3: Kick                     *-*-*-*-*-*-");
+			textArea.setText(textArea.getText() + "\n-*-*-*-*-*-*                 4: Bite                     *-*-*-*-*-*-");
+			textArea.setText(textArea.getText() + "\n*********************************************************************");
+			while(bol){
+				if(bool == true){
+					input = textField.getText();
+					textField.setText("");
+					bool = false;
+					bol = false;
+				}
+			}
+			if (input.equals("")){
+				input = " ";
+			}
+			char key = input.charAt(0);
+			switch (key){
+			case '1': p.getAttackStrength() ; break;
+			case '2': p.getAttackStrength() ; break;
+			case '3': p.getAttackStrength() ; break;
+			case '4': p.getAttackStrength() ; break;
+			default: textArea.setText(textArea.getText() + "-*-*-*-*-*-*               Invalid input.                *-*-*-*-*-*-");
+			textArea.setText(textArea.getText() + "\n*********************************************************************");
+			fight(p,e,gui);
+			}
+			e.setHealth(e.getHealth() - p.getAttackStrength());
+			if(e.getHealth()<=0){
+				e.setHealth(0);
+			}
+			textArea.setText(textArea.getText() + "\n-*-*-*-*-*-*          Your attack did " + p.getAttackStrength() + 
+					" damage.         *-*-*-*-*-*-\n"
+					+ "-*-*-*-*-*-*       The enemies health is now at " + e.getHealth() + "       *-*-*-*-*-*-");
+			textArea.setText(textArea.getText() + "\n*********************************************************************");
+			if(e.getHealth()==0){
+				textArea.setText(textArea.getText() + "\n-*-*-*-*-*-*     You did it! Your enemy is vaquished!    *-*-*-*-*-*-\n");
+				textArea.setText(textArea.getText() + "-*-*-*-*-*-*             Health reset to max             *-*-*-*-*-*-\n");
+				textArea.setText(textArea.getText() + "\n*********************************************************************");
+				p.setHealth(100);
+				break;
+			}
+			textArea.setText(textArea.getText() + "\n-*-*-*-*    The enemy now attacks with devastating force!    *-*-*-*-");
+			textArea.setText(textArea.getText() + "\n*********************************************************************");
+			e.setAttackStrength((int)(Math.random()*10));
+			p.setHealth(p.getHealth() - e.getAttackStrength());
+			if(p.getHealth()<=0){
+				p.setHealth(0);
+			}
+			textArea.setText(textArea.getText() + "\n-*-*-*-*-*-*       The enemies attack did " + e.getAttackStrength() + " damage.      *-*-*-*-*-*-"
+					+ "\n-*-*-*-*-*-*   Your health is now at " + p.getHealth() + "          *-*-*-*-*-*-" + '\n' + 
+					"-*-*-*-*-*-*          (Press enter to continue)          *-*-*-*-*-*-");
+			textArea.setText(textArea.getText() + "\n*********************************************************************");
+			if(p.getHealth()==0){
+				textArea.setText(textArea.getText() + "\n-*-*-*   Oh no....you died. Oh well...better luck next time!   *-*-*-");
+				textArea.setText(textArea.getText() + "\n*********************************************************************");
+				String before = textArea.getText();
+				gui.guiMenu(before, gui);
+				break;
+			}
+		}	
+	}
+}
