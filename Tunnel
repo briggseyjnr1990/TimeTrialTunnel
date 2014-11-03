@@ -1,0 +1,74 @@
+public class Tunnel {
+
+	public static Room r1;
+	private Room entrance;
+
+	public Room createCave(){
+
+		Room  outside = new Room();
+		outside.setDesc("\n*********************************************************************"+
+				"\n-*-*-*-*-*-*   You're outside, on the edge of a cliff;   *-*-*-*-*-*-\n" +
+				"-*-*-*-*-*-*   the cave opens straight down (outside).   *-*-*-*-*-*-");
+
+		r1 = new Room();
+		r1.setDesc("\n*********************************************************************"+
+				"\n-*-*-*   The darkness is pierced by a bright light overhead.   *-*-*-\n" + 
+				"-*-*-*    There is a dark, narrow passage to the east (r1).    *-*-*-" );
+
+		outside.setSide(5, r1);
+		r1.setSide(4, outside);
+
+		Key newKey = new Key();
+		newKey.setDesc("A rusted metal key");
+
+		Room r2 = new Room();
+		r2.addItem(newKey);
+		r2.setDesc("\n*********************************************************************"+
+				"\n-*-*-*  You are in a gloomy oval shaped room with grey walls.  *-*-*-\n" + 
+				"-*-*-*     There is a dim light to the west, and a narrow      *-*-*-\n" +
+				"-*-*-*   dark hole to the east only about 18 inches high(r2).  *-*-*-");
+
+		r1.setSide(2, r2);
+		r2.setSide(3, r1);
+
+		Room r3 = new Room();
+		r3.setDesc("\n*********************************************************************"+
+				"\n-*-*-*    Bats flitter overhead, disturbed by your presence.   *-*-*-\n" + 
+				"-*    There is the faint hint of light to the west. To the east    *-\n" + 
+				"-*-*-*-*-*-*    the hole drops steeply downwards (r3).   *-*-*-*-*-*-");
+
+		r2.setSide(2, r3);
+		r3.setSide(3, r2);
+
+		Room r4 = new Room();
+		r4.setDesc("\n*********************************************************************"+
+				"\n-*-*-*-*-*-*        You are in a man-made tunnel,        *-*-*-*-*-*-\n" +
+				"-*-*-*       half-carved from the existing cave network.       *-*-*-\n" +
+				"-*     The floor is slick with water dripping from the ceiling.    *-\n" +
+				"-*-*-*-*-*-*      A hole in the roof leads upwards.      *-*-*-*-*-*-\n" +
+				"-*-*-*       To the west there is an iron-clad door (r4).      *-*-*-");
+
+		r3.setSide(2, r4);
+		r4.setSide(4, r3);
+
+		Enemy newEnemy = new Enemy();
+		Treasure newTreasure = new Treasure();
+		newTreasure.setDesc(" A treasure chest ");
+		Room r5 = new Room();
+		r5.addEnemy(newEnemy);
+		r5.addItem(newTreasure);
+		r5.setDesc("\n*********************************************************************"+
+				"\n-*-*-*-*-*-*    Torches line the walls of the tunnel.    *-*-*-*-*-*-\n"+
+				"-*-*-*-*-*-*          Carvings of wild beasts            *-*-*-*-*-*-\n" + 
+				"-*-*-*       and birds lie dotted on the walls and floor.      *-*-*-\n"+
+				"-*-*-*-*-*-*    To the east is an iron-clad door (r5).   *-*-*-*-*-*-\n");
+
+		Door newDoor = new Door(r4, r5, newKey);
+
+		r4.setSide(3, newDoor);
+		r5.setSide(2, newDoor);
+
+		entrance = outside;
+		return entrance;
+	}
+}
