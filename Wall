@@ -1,0 +1,8 @@
+public class Wall implements Enterable {
+
+	public void enter(Player p, Gui gui){
+		
+		gui.textArea.setText(gui.textArea.getText() + "\n-*-*-*-*-*-*    		 Ouch! That hurts.               *-*-*-*-*-*-");
+		gui.textArea.setText(gui.textArea.getText() + "\n*********************************************************************");
+	}
+}
