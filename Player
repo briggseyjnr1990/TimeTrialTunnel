@@ -1,0 +1,85 @@
+import java.util.ArrayList;
+public class Player {
+
+	private Room myLoc;
+	private ArrayList<Item> myThings = new ArrayList<Item>();
+	private int itemCount = 0;
+	private int health = 100;
+	private int attackStrength = 10;
+
+	public void setRoom(Room r){
+		myLoc = r;
+	}
+	public String look(){
+		return myLoc.getDesc();
+	}
+	public void go(int direction, Gui gui){
+		myLoc.exit(direction,this, gui);
+	}
+	public void pickUp(Item i){
+		if(i instanceof Key){
+			myThings.add(0, i);
+			itemCount++;
+			myLoc.removeItem(i);
+		}
+		else if(i instanceof Weapon){
+			attackStrength = attackStrength + 10;
+			myThings.add(i);
+			itemCount++;
+			myLoc.removeItem(i);
+		}
+		else if(i instanceof Armour){
+			health = health + 20;
+			myThings.add(i);
+			itemCount++;
+			myLoc.removeItem(i);
+		}
+		else{
+			myThings.add(i);
+			itemCount++;
+			myLoc.removeItem(i);
+		}
+	}
+	public boolean haveItem(Item itemToFind){
+		for (int n = 0; n < itemCount ; n++){
+			if (myThings.get(n) == itemToFind){
+				return true;
+			}
+		}
+		return false;
+	}
+	public void drop(int itemNum){
+		if (itemNum > 0 & itemNum <= itemCount){
+			myLoc.addItem(myThings.get(itemNum-1));
+			itemCount--;
+		}
+	}
+	public void setLoc(Room r){
+		myLoc = r;
+	}
+	public Room getLoc(){
+		return myLoc;
+	}
+	public String showMyThings(){
+		String outString = "";
+		for (int n = 0; n < itemCount ; n++){
+			outString = outString + Integer.toString(n+1) + ": " + myThings.get(n).getDesc() + '\n';
+		}
+		return outString;
+	}
+	public boolean handsEmpty(){
+		return itemCount==0;
+	}
+	public int numItemsCarried(){
+		return itemCount;
+	}
+	public int getAttackStrength() {
+		return attackStrength;
+	}
+	public int getHealth() {
+		return health;
+	}
+	public void setHealth(int health) {
+		this.health = health;
+	}
+}
