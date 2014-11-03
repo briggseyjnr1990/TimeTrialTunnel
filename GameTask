@@ -1,0 +1,15 @@
+import java.util.TimerTask;
+
+class GameTask extends TimerTask{
+	
+	String before;
+	Gui theGui;
+	public GameTask(Gui theGui){
+		this.theGui = theGui;
+	}
+	public void run() {
+		theGui.textArea.setText(theGui.textArea.getText()+"\nTime's up. You lose");
+		before=theGui.textArea.getText();
+		theGui.guiMenu(before, theGui);
+	}
+}
