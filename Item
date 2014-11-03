@@ -1,0 +1,19 @@
+public class Item {
+
+	  private String description;
+
+	  public void setDesc(String d){
+	      description = d;
+	  }
+	  public String getDesc(){
+		     return description;
+	  }
+}
+class Key extends Item {
+}
+class Armour extends Item{
+}
+class Weapon extends Item{
+}
+class Treasure extends Item{
+}
