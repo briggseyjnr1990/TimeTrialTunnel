@@ -169,9 +169,6 @@ public class Gui extends JFrame {
 					case 'u': case 'U': case 'd': case 'D':
 						direction = convertDirection(input, gui);
 						thePlayer.go(direction, gui);
-						if((thePlayer.getLoc()== Tunnel.r1)){
-							lblNewLabel.setIcon(new ImageIcon(Gui.class.getResource("/Image/42132240.png")));
-						}
 						if((thePlayer.getLoc()).noEnemies()){	
 						}
 						else{
